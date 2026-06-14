@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baptême de Louisa – Menu</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f7f5f0;
+      color: #2c2c2a;
+      min-height: 100vh;
+      padding: 2rem 1rem 3rem;
+    }
+    .container { max-width: 480px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header .emoji { font-size: 36px; display: block; margin-bottom: 10px; }
+    .header h1 { font-size: 24px; font-weight: 600; color: #2c2c2a; }
+    .header p { font-size: 15px; color: #888; margin-top: 6px; }
+    .card { background: #fff; border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #e8e5de; }
+    .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #aaa; margin-bottom: 12px; }
+    .name-input { width: 100%; font-size: 16px; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #e0ddd6; background: #faf9f6; color: #2c2c2a; outline: none; transition: border-color 0.2s; }
+    .name-input:focus { border-color: #1D9E75; }
+    .choice { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #e0ddd6; background: #faf9f6; cursor: pointer; transition: border-color 0.15s, background 0.15s; margin-bottom: 8px; user-select: none; }
+    .choice:last-child { margin-bottom: 0; }
+    .choice:hover { border-color: #aad5c5; }
+    .choice.selected { border-color: #1D9E75; background: #eaf6f1; }
+    .radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ccc; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s; }
+    .choice.selected .radio-dot { border-color: #1D9E75; background: #1D9E75; }
+    .radio-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; display: none; }
+    .choice.selected .radio-dot::after { display: block; }
+    .choice-text { font-size: 14px; line-height: 1.55; color: #2c2c2a; }
+    .choice.selected .choice-text { color: #0f6e56; }
+    .btn-submit { width: 100%; padding: 14px; border-radius: 12px; background: #1D9E75; color: white; font-size: 16px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.15s, transform 0.1s; margin-top: 0.5rem; }
+    .btn-submit:hover:not(:disabled) { opacity: 0.88; }
+    .btn-submit:active:not(:disabled) { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.35; cursor: default; }
+    #success-view { display: none; text-align: center; padding: 3rem 1rem; }
+    #success-view .big { font-size: 48px; margin-bottom: 16px; }
+    #success-view h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    #success-view p { font-size: 15px; color: #888; line-height: 1.6; }
+    #error-msg { display: none; font-size: 13px; color: #c0392b; text-align: center; margin-top: 10px; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div id="form-view">
+    <div class="header">
+      <span class="emoji">🍼</span>
+      <h1>Baptême de Louisa</h1>
+      <p>Merci de nous indiquer vos choix de menu</p>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Votre prénom</div>
+      <input class="name-input" type="text" id="guest-name" placeholder="Ex : Marie" autocomplete="given-name" />
+    </div>
+
+    <div class="card">
+      <div class="section-label">Entrée</div>
+      <div class="choice" data-course="entree" data-val="Ceviche de daurade" onclick="selectChoice(this)">
+        <div class="radio-dot"></div>
+        <span class="choice-text">Ceviche de daurade aux agrumes et soupçon de vanille</span>
+      </div>
+      <div class="choice" data-course="entree" data-val="Porc confit foie gras" onclick="selectChoice(this)">
+        <div class="radio-dot"></div>
+        <span class="choice-text">Porc confit déglacé au balsamique, foie gras, tomates cerises et pickles</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Plat</div>
+      <div class="choice" data-course="plat" data-val="Lieu jaune beurre blanc myrtille" onclick="selectChoice(this)">
+        <div class="radio-dot"></div>
+        <span class="choice-text">Pavé de lieu jaune, beurre blanc myrtille, risotto d'épeautre, fondue de poireaux et girolles</span>
+      </div>
+      <div class="choice" data-course="plat" data-val="Souris d'agneau romarin" onclick="selectChoice(this)">
+        <div class="radio-dot"></div>
+        <span class="choice-text">Souris d'agneau au romarin, jus corsé au miel, polenta crémeuse aux herbes et légumes de saison</span>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="submit-btn" onclick="submitForm()" disabled>Valider mes choix</button>
+    <div id="error-msg">Une erreur est survenue, merci de réessayer.</div>
+  </div>
+
+  <div id="success-view">
+    <div class="big">🌿</div>
+    <h2>Merci <span id="confirmed-name"></span>&nbsp;!</h2>
+    <p>Votre choix a bien été enregistré.<br>On a hâte de vous retrouver<br>pour célébrer Louisa.</p>
+  </div>
+
+</div>
+<script>
+  let choices = { entree: null, plat: null };
+
+  function selectChoice(el) {
+    const course = el.dataset.course;
+    document.querySelectorAll('[data-course="' + course + '"]')
+      .forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    choices[course] = el.dataset.val;
+    checkReady();
+  }
+
+  function checkReady() {
+    const name = document.getElementById('guest-name').value.trim();
+    document.getElementById('submit-btn').disabled = !(name && choices.entree && choices.plat);
+  }
+
+  document.getElementById('guest-name').addEventListener('input', checkReady);
+
+  async function submitForm() {
+    const prenom = document.getElementById('guest-name').value.trim();
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Envoi en cours…';
+    document.getElementById('error-msg').style.display = 'none';
+
+    try {
+      const res = await fetch('https://formspree.io/f/meewvgnk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          Prénom: prenom,
+          Entrée: choices.entree,
+          Plat: choices.plat
+        })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        document.getElementById('form-view').style.display = 'none';
+        document.getElementById('confirmed-name').textContent = prenom;
+        document.getElementById('success-view').style.display = 'block';
+      } else {
+        throw new Error('Formspree error');
+      }
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = 'Valider mes choix';
+      document.getElementById('error-msg').style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>
